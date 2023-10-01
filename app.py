@@ -18,11 +18,18 @@ HELLO = {
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    result = None
     global LANGUAGE
     if request.method == 'POST':
+        result = {}
         LANGUAGE = request.form.get('language')
-    hello_message = HELLO.get(LANGUAGE, HELLO['English'])
-    return render_template("index.html", options=OPTIONS_LANG, selected_language=LANGUAGE, hello_message=hello_message)
+        hello_message = HELLO.get(LANGUAGE, HELLO['English'])
+        result["hello_message"] = hello_message
+
+    return render_template("index.html",
+                           options=OPTIONS_LANG,
+                           selected_language=LANGUAGE,
+                           result=result)
 
 
 if __name__ == "__main__":
