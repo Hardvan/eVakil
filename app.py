@@ -1,4 +1,8 @@
 from flask import Flask, render_template, request, jsonify
+from googletrans import Translator
+from gtts import gTTS
+import os
+
 
 app = Flask(__name__)
 
@@ -7,24 +11,59 @@ LANGUAGE = None
 OPTIONS_LANG = ["English", "Hindi", "Marathi", "Gujarati", "Kannada", "Tamil"]
 
 HELLO = {
-    "English": "Hi! Welcome to eVakil, your digital lawyer.",
-    "Hindi": "नमस्ते! ईवकील में आपका स्वागत है, आपका डिजिटल वकील।",
-    "Marathi": "नमस्कार! ईवकीलवर आपले स्वागत आहे, आपले डिजिटल वकील.",
-    "Gujarati": "નમસ્તે! ઈવકીલ પર આપનું સ્વાગત છે, આપનો ડિજિટલ વકીલ.",
-    "Kannada": "ಹಲೋ! ಈವಕಿಲ್‌ಗೆ ಸುಸ್ವಾಗತ, ನಿಮ್ಮ ಡಿಜಿಟಲ್ ವಕೀಲ್.",
-    "Tamil": "வணக்கம்! ஈவகில் க்கு வருக, உங்கள் டிஜிட்டல் வக்கீல்."
+    "English": "Hi! Welcome to \"eVakil\", your digital lawyer and assistant.",
 }
+
+
+def get_hello_message(lang):
+
+    lang_map = {"English": "en",
+                "Hindi": "hi",
+                "Marathi": "mr",
+                "Gujarati": "gu",
+                "Kannada": "kn",
+                }
+
+    translator = Translator()
+    tranlation = translator.translate(
+        HELLO['English'], src="en", dest=lang_map[lang])
+
+    return tranlation.text
+
+
+def make_audio(text, lang):
+
+    lang_map = {"English": "en",
+                "Hindi": "hi",
+                "Marathi": "mr",
+                "Gujarati": "gu",
+                "Kannada": "kn",
+                }
+
+    tts = gTTS(text=text, lang=lang_map[lang], slow=False)
+    # If file exists, delete it
+    if os.path.exists("./static/audio/hello.mp3"):
+        os.remove("./static/audio/hello.mp3")
+    tts.save("./static/audio/hello.mp3")
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+
     result = None
-    global LANGUAGE
+
     if request.method == 'POST':
         result = {}
+
+        # Get user's choice
+        global LANGUAGE
         LANGUAGE = request.form.get('language')
-        hello_message = HELLO.get(LANGUAGE, HELLO['English'])
-        result["hello_message"] = hello_message
+
+        # Get hello message in selected language
+        result["hello_message"] = get_hello_message(LANGUAGE)
+
+        # Make audio file
+        make_audio(result["hello_message"], LANGUAGE)
 
     return render_template("index.html",
                            options=OPTIONS_LANG,

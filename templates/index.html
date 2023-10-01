@@ -26,6 +26,10 @@
 
     {% if result %}
     <div id="hello-message">{{ result.hello_message }}</div>
+    <!-- Autoplay the audio stored in static/audio/hello.mp3-->
+    <audio autoplay>
+      <source src="{{ url_for('static', filename='audio/hello.mp3') }}" />
+    </audio>
     {% endif %}
 
     <!-- Custom JS -->
