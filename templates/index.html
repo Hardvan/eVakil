@@ -3,19 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>eVakil</title>
 
     <!-- Custom CSS -->
     <link
       rel="stylesheet"
-      href="{{url_for('static', filename='css/style.css')}}"
+      href="{{ url_for('static', filename='css/style.css') }}"
     />
   </head>
 
   <body>
     <h1>eVakil</h1>
+    <form id="language-form" action="/" method="POST">
+      <label for="language-select">Select Language:</label>
+      <select id="language-select" name="language">
+        {% for language in options %}
+        <option value="{{ language }}">{{ language }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="hello-message">{{ hello_message }}</div>
 
     <!-- Custom JS -->
-    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>
