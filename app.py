@@ -22,6 +22,7 @@ def get_hello_message(lang):
                 "Marathi": "mr",
                 "Gujarati": "gu",
                 "Kannada": "kn",
+                "Tamil": "ta",
                 }
 
     translator = Translator()
@@ -38,13 +39,12 @@ def make_audio(text, lang):
                 "Marathi": "mr",
                 "Gujarati": "gu",
                 "Kannada": "kn",
+                "Tamil": "ta",
                 }
 
     tts = gTTS(text=text, lang=lang_map[lang], slow=False)
-    # If file exists, delete it
-    if os.path.exists("./static/audio/hello.mp3"):
-        os.remove("./static/audio/hello.mp3")
-    tts.save("./static/audio/hello.mp3")
+    tts.save(f"./static/audio/hello_{lang}.mp3")
+    print(f"File saved successfully in {lang} language.")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -58,12 +58,15 @@ def index():
         # Get user's choice
         global LANGUAGE
         LANGUAGE = request.form.get('language')
+        print(f"Language selected: {LANGUAGE}")
 
         # Get hello message in selected language
         result["hello_message"] = get_hello_message(LANGUAGE)
+        print(f"Hello message: {result['hello_message']}")
 
         # Make audio file
         make_audio(result["hello_message"], LANGUAGE)
+        result["hello_audio"] = f"./static/audio/hello_{LANGUAGE}.mp3"
 
     return render_template("index.html",
                            options=OPTIONS_LANG,
