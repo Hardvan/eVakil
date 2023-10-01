@@ -13,20 +13,22 @@
   </head>
 
   <body>
-    <h1>eVakil</h1>
+    <h1 class="title">eVakil</h1>
     <div class="container">
       <form id="language-form" action="/" method="POST">
-        <label for="language-select">Select Language:</label>
-        <select id="language-select" name="language">
+        <label for="language-select" class="label">Select Language:</label>
+        <select id="language-select" name="language" class="select">
           {% for language in options %}
-          <option value="{{ language }}">{{ language }}</option>
+          <option value="{{ language }}" class="option">{{ language }}</option>
           {% endfor %}
         </select>
-        <button type="submit">Submit</button>
+        <button type="submit" class="submit-button">Submit</button>
       </form>
 
       {% if result %}
-      <div id="hello-message">{{ result.hello_message }}</div>
+      <div id="hello-message" class="hello-message">
+        {{ result.hello_message }}
+      </div>
       <!-- Autoplay the audio stored in static/audio/hello.mp3-->
       <audio controls autoplay hidden>
         <source src="{{result.hello_audio}}" type="audio/mpeg" />
