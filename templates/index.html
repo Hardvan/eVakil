@@ -8,31 +8,33 @@
     <!-- Custom CSS -->
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
+      href="{{ url_for('static', filename='css/index.css') }}"
     />
   </head>
 
   <body>
     <h1>eVakil</h1>
-    <form id="language-form" action="/" method="POST">
-      <label for="language-select">Select Language:</label>
-      <select id="language-select" name="language">
-        {% for language in options %}
-        <option value="{{ language }}">{{ language }}</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+      <form id="language-form" action="/" method="POST">
+        <label for="language-select">Select Language:</label>
+        <select id="language-select" name="language">
+          {% for language in options %}
+          <option value="{{ language }}">{{ language }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Submit</button>
+      </form>
 
-    {% if result %}
-    <div id="hello-message">{{ result.hello_message }}</div>
-    <!-- Autoplay the audio stored in static/audio/hello.mp3-->
-    <audio controls autoplay hidden>
-      <source src="{{result.hello_audio}}" type="audio/mpeg" />
-    </audio>
-    {% endif %}
+      {% if result %}
+      <div id="hello-message">{{ result.hello_message }}</div>
+      <!-- Autoplay the audio stored in static/audio/hello.mp3-->
+      <audio controls autoplay hidden>
+        <source src="{{result.hello_audio}}" type="audio/mpeg" />
+      </audio>
+      {% endif %}
+    </div>
 
     <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
   </body>
 </html>
