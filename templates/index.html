@@ -27,7 +27,8 @@
 
       {% if result %}
       <div id="hello-message" class="hello-message">
-        {{ result.hello_message }}
+        <h2>Language Chosen: {{ user_preference.language }}</h2>
+        <p>{{ result.hello_message }}</p>
       </div>
       <!-- Autoplay the audio stored in static/audio/hello.mp3-->
       <audio controls autoplay hidden>

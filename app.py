@@ -7,8 +7,10 @@ import os
 app = Flask(__name__)
 
 # GLOBAL VARIABLES
-LANGUAGE = "English"  # Preferred language of the user (Default: English)
-REGEN_AUDIO = False  # ? Flag to regenerate audio file when string changes
+user_preference = {         # ? User's preferences
+    "language": "English"
+}
+REGEN_AUDIO = False         # ? Flag to regenerate audio file when string changes
 
 LANG_MAP = {"English": "en",  # Language mapping
             "Hindi": "hi",
@@ -16,6 +18,10 @@ LANG_MAP = {"English": "en",  # Language mapping
             "Gujarati": "gu",
             "Kannada": "kn",
             "Tamil": "ta",
+            "Telugu": "te",
+            "Malayalam": "ml",
+            "Bengali": "bn",
+            "Punjabi": "pa",
             "Japanese": "ja",
             }
 
@@ -55,20 +61,22 @@ def index():
         result = {}
 
         # Get user's choice
-        global LANGUAGE
-        LANGUAGE = request.form.get('language')
+        global user_preference
+        user_preference["language"] = request.form.get('language')
         # print(f"Language selected: {LANGUAGE}")
 
         # Get hello message in selected language
-        result["hello_message"] = get_hello_message(LANGUAGE)
+        result["hello_message"] = get_hello_message(
+            user_preference["language"])
         # print(f"Hello message: {result['hello_message']}")
 
         # Make audio file
-        result["hello_audio"] = make_audio(result["hello_message"], LANGUAGE)
+        result["hello_audio"] = make_audio(
+            result["hello_message"], user_preference["language"])
 
     return render_template("index.html",
                            options=LANG_MAP.keys(),
-                           selected_language=LANGUAGE,
+                           user_preference=user_preference,
                            result=result)
 
 
