@@ -1,14 +1,16 @@
 from flask import Flask, render_template, request, jsonify
 from googletrans import Translator
 from gtts import gTTS
+import os
 
 
 app = Flask(__name__)
 
-# User's choice
-LANGUAGE = None
+# GLOBAL VARIABLES
+LANGUAGE = "English"  # Preferred language of the user (Default: English)
+REGEN_AUDIO = False  # ? Flag to regenerate audio file when string changes
 
-LANG_MAP = {"English": "en",
+LANG_MAP = {"English": "en",  # Language mapping
             "Hindi": "hi",
             "Marathi": "mr",
             "Gujarati": "gu",
@@ -33,9 +35,15 @@ def get_hello_message(lang):
 
 def make_audio(text, lang):
 
-    tts = gTTS(text=text, lang=LANG_MAP[lang], slow=False)
-    tts.save(f"./static/audio/hello_{lang}.mp3")
-    # print(f"File saved successfully in {lang} language.")
+    audio_path = f"./static/audio/hello_{lang}.mp3"
+
+    # Audio file not present or REGEN_AUDIO flag is True
+    if not os.path.exists(audio_path) or REGEN_AUDIO:
+        tts = gTTS(text=text, lang=LANG_MAP[lang], slow=False)
+        tts.save(audio_path)
+        # print(f"File saved successfully in {lang} language.")
+
+    return audio_path
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -56,8 +64,7 @@ def index():
         # print(f"Hello message: {result['hello_message']}")
 
         # Make audio file
-        make_audio(result["hello_message"], LANGUAGE)
-        result["hello_audio"] = f"./static/audio/hello_{LANGUAGE}.mp3"
+        result["hello_audio"] = make_audio(result["hello_message"], LANGUAGE)
 
     return render_template("index.html",
                            options=LANG_MAP.keys(),
