@@ -1,14 +1,21 @@
 from flask import Flask, render_template, request, jsonify
 from googletrans import Translator
 from gtts import gTTS
-import os
 
 
 app = Flask(__name__)
 
 # User's choice
 LANGUAGE = None
-OPTIONS_LANG = ["English", "Hindi", "Marathi", "Gujarati", "Kannada", "Tamil"]
+
+LANG_MAP = {"English": "en",
+            "Hindi": "hi",
+            "Marathi": "mr",
+            "Gujarati": "gu",
+            "Kannada": "kn",
+            "Tamil": "ta",
+            "Japanese": "ja",
+            }
 
 HELLO = {
     "English": "Hi! Welcome to \"eVakil\", your digital lawyer and assistant.",
@@ -17,34 +24,18 @@ HELLO = {
 
 def get_hello_message(lang):
 
-    lang_map = {"English": "en",
-                "Hindi": "hi",
-                "Marathi": "mr",
-                "Gujarati": "gu",
-                "Kannada": "kn",
-                "Tamil": "ta",
-                }
-
     translator = Translator()
     tranlation = translator.translate(
-        HELLO['English'], src="en", dest=lang_map[lang])
+        HELLO['English'], src="en", dest=LANG_MAP[lang])
 
     return tranlation.text
 
 
 def make_audio(text, lang):
 
-    lang_map = {"English": "en",
-                "Hindi": "hi",
-                "Marathi": "mr",
-                "Gujarati": "gu",
-                "Kannada": "kn",
-                "Tamil": "ta",
-                }
-
-    tts = gTTS(text=text, lang=lang_map[lang], slow=False)
+    tts = gTTS(text=text, lang=LANG_MAP[lang], slow=False)
     tts.save(f"./static/audio/hello_{lang}.mp3")
-    print(f"File saved successfully in {lang} language.")
+    # print(f"File saved successfully in {lang} language.")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -58,18 +49,18 @@ def index():
         # Get user's choice
         global LANGUAGE
         LANGUAGE = request.form.get('language')
-        print(f"Language selected: {LANGUAGE}")
+        # print(f"Language selected: {LANGUAGE}")
 
         # Get hello message in selected language
         result["hello_message"] = get_hello_message(LANGUAGE)
-        print(f"Hello message: {result['hello_message']}")
+        # print(f"Hello message: {result['hello_message']}")
 
         # Make audio file
         make_audio(result["hello_message"], LANGUAGE)
         result["hello_audio"] = f"./static/audio/hello_{LANGUAGE}.mp3"
 
     return render_template("index.html",
-                           options=OPTIONS_LANG,
+                           options=LANG_MAP.keys(),
                            selected_language=LANGUAGE,
                            result=result)
 
