@@ -154,14 +154,21 @@ if __name__ == "__main__":
     print("\nTest 6: With caching")
     start = time.time()
     audio_path_1 = make_audio(
-        text, "Hindi", audio_path="./static/audio/test_1.mp3")
+        text, "Hindi", audio_path=audio_path_1)
     end = time.time()
     ms = (end - start) * 1000
     print(f"Time taken with caching (Test 6): {ms:.2f}ms")
 
+    print("\n\n")
+    print("=====================================")
+    print("Cache contents")
+    print("=====================================")
+    print("Translation cache:", translation_cache)
+    print("Audio cache:", audio_cache)
+
     # Delete the audio files
-    os.remove("./static/audio/test_1.mp3")
-    os.remove("./static/audio/test_2.mp3")
+    os.remove(audio_path_1)
+    os.remove(audio_path_2)
 
     """
     Output:
