@@ -21,35 +21,76 @@ translation_cache = {}
 
 
 def translate_message(text, lang):
+    """Translate the given text to the given language. If the translation is
+    already in the cache, it will not be translated again.
+
+    Args:
+        text (str): Text to be translated.
+        lang (str): Language to translate to.
+
+    Returns:
+        str: Translated text.
+    """
 
     # Check if the translation is already in the cache
-    if (text, lang) in translation_cache:
-        return translation_cache[(text, lang)]
+    cache_key = (text, lang)
+    if cache_key in translation_cache:
+        return translation_cache[cache_key]
 
     translator = Translator()
     translation = translator.translate(text, src="en", dest=LANG_MAP[lang])
 
     # Cache the translation
-    translation_cache[(text, lang)] = translation.text
+    translation_cache[cache_key] = translation.text
 
     return translation.text
 
 
+# Dictionary to cache audio files
+audio_cache = {}
+
+
 def make_audio(text, lang, audio_path=None, regen=False):
+    """Generate an audio file for the given text in the given language and
+    save it to the specified path. If the audio file is already in the cache,
+    it will not be generated again unless regen is set to True.
+
+    Args:
+        text (str): Text to be converted to audio.
+        lang (str): Language of the text.
+        audio_path (str, optional): Path to save the audio file. Defaults to None.
+        regen (bool, optional): If True, the audio file will be regenerated even
+                                if it is already in the cache. Defaults to False.
+
+    Raises:
+        ValueError: If audio_path is not provided.
+
+    Returns:
+        str: Path to the generated audio file.
+    """
 
     if audio_path is None:
         raise ValueError("Audio path not provided.")
 
-    # Audio file not present or REGEN_AUDIO flag is True
-    if (not os.path.exists(audio_path)) or (regen):
+    # Check if the audio is already in the cache
+    cache_key = (text, lang)
+    if not regen and cache_key in audio_cache:
+        return audio_cache[cache_key]
 
-        tts = gTTS(text=text, lang=LANG_MAP[lang], slow=False)
-        tts.save(audio_path)
+    # Generate the audio file
+    tts = gTTS(text=text, lang=LANG_MAP[lang], slow=False)
+    tts.save(audio_path)
+
+    # Cache the audio file
+    audio_cache[cache_key] = audio_path
 
     return audio_path
 
 
 if __name__ == "__main__":
+    """
+    Test the functions in this module.
+    """
 
     import time
 
