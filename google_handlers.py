@@ -74,7 +74,7 @@ def make_audio(text, lang, audio_path=None, regen=False):
 
     # Check if the audio is already in the cache
     cache_key = (text, lang)
-    if not regen and cache_key in audio_cache:
+    if not regen and cache_key in audio_cache and os.path.exists(audio_cache[cache_key]):
         return audio_cache[cache_key]
 
     # Generate the audio file
@@ -87,90 +87,9 @@ def make_audio(text, lang, audio_path=None, regen=False):
     return audio_path
 
 
-if __name__ == "__main__":
-    """
-    Test the functions in this module.
-    """
+def test_translate_message():
+    """Test the translate_message function.
 
-    import time
-
-    # Check the running time for translate_message
-    print("=====================================")
-    print("Running time for translate_message()")
-    print("=====================================")
-    text = "Hello, how are you?" * 100
-    print("Text length:", len(text))
-
-    # Test 1: Without caching (same translation request)
-    print("\nTest 1: Without caching")
-    start = time.time()
-    translation_1 = translate_message(text, "Hindi")
-    end = time.time()
-    ms = (end - start) * 1000
-    print(f"Time taken without caching (Test 1): {ms:.2f}ms")
-
-    # Test 2: Without caching (different translation request)
-    print("\nTest 2: Without caching (different request)")
-    start = time.time()
-    translation_2 = translate_message(text, "Marathi")
-    end = time.time()
-    ms = (end - start) * 1000
-    print(f"Time taken without caching (Test 2): {ms:.2f}ms")
-
-    # Test 3: With caching (same translation request)
-    print("\nTest 3: With caching")
-    start = time.time()
-    translation_3 = translate_message(text, "Hindi")
-    end = time.time()
-    ms = (end - start) * 1000
-    print(f"Time taken with caching (Test 3): {ms:.2f}ms")
-
-    # Check the running time for make_audio
-    print("\n\n=====================================")
-    print("Running time for make_audio()")
-    print("=====================================")
-    text = "Hello, how are you?" * 10
-    print("Text length:", len(text))
-
-    # Test 4: Without caching (same translation request)
-    print("\nTest 4: Without caching")
-    start = time.time()
-    audio_path_1 = make_audio(
-        text, "Hindi", audio_path="./static/audio/test_1.mp3")
-    end = time.time()
-    ms = (end - start) * 1000
-    print(f"Time taken without caching (Test 4): {ms:.2f}ms")
-
-    # Test 5: Without caching (different translation request)
-    print("\nTest 5: Without caching (different request)")
-    start = time.time()
-    audio_path_2 = make_audio(
-        text, "Marathi", audio_path="./static/audio/test_2.mp3")
-    end = time.time()
-    ms = (end - start) * 1000
-    print(f"Time taken without caching (Test 5): {ms:.2f}ms")
-
-    # Test 6: With caching (same translation request)
-    print("\nTest 6: With caching")
-    start = time.time()
-    audio_path_1 = make_audio(
-        text, "Hindi", audio_path=audio_path_1)
-    end = time.time()
-    ms = (end - start) * 1000
-    print(f"Time taken with caching (Test 6): {ms:.2f}ms")
-
-    print("\n\n")
-    print("=====================================")
-    print("Cache contents")
-    print("=====================================")
-    print("Translation cache:", translation_cache)
-    print("Audio cache:", audio_cache)
-
-    # Delete the audio files
-    os.remove(audio_path_1)
-    os.remove(audio_path_2)
-
-    """
     Output:
     =====================================
     Running time for translate_message()
@@ -178,26 +97,128 @@ if __name__ == "__main__":
     Text length: 1900
 
     Test 1: Without caching
-    Time taken without caching (Test 1): 348.10ms
+    Time taken without caching (Test 1): 2185.41ms
 
     Test 2: Without caching (different request)
-    Time taken without caching (Test 2): 266.46ms
+    Time taken without caching (Test 2): 1658.46ms
 
     Test 3: With caching
     Time taken with caching (Test 3): 0.00ms
+    """
+
+    import time
+
+    LINE = "====================================="
+
+    # Check the running time for translate_message
+    print(LINE)
+    print("Running time for translate_message()")
+    print(LINE)
+    text = "Hello, how are you?" * 100
+    print("Text length:", len(text))
+
+    # Test 1: Without caching (same translation request)
+    print("\nTest 1: Without caching")
+    start = time.time()
+    translate_message(text, "Hindi")
+    end = time.time()
+    ms = (end - start) * 1000
+    print(f"Time taken without caching (Test 1): {ms:.2f}ms")
+
+    # Test 2: Without caching (different translation request)
+    print("\nTest 2: Without caching (different request)")
+    start = time.time()
+    translate_message(text, "Marathi")
+    end = time.time()
+    ms = (end - start) * 1000
+    print(f"Time taken without caching (Test 2): {ms:.2f}ms")
+
+    # Test 3: With caching (same translation request)
+    print("\nTest 3: With caching")
+    start = time.time()
+    translate_message(text, "Hindi")
+    end = time.time()
+    ms = (end - start) * 1000
+    print(f"Time taken with caching (Test 3): {ms:.2f}ms")
 
 
+def test_make_audio():
+    """Test the make_audio function.
+
+    Output:
     =====================================
     Running time for make_audio()
     =====================================
     Text length: 190
 
-    Test 4: Without caching
-    Time taken without caching (Test 4): 6084.29ms
+    Test 1: Without caching
+    Time taken without caching (Test 1): 4388.61ms
 
-    Test 5: Without caching (different request)
-    Time taken without caching (Test 5): 6714.04ms
+    Test 2: Without caching (different request)
+    Time taken without caching (Test 2): 4768.54ms
 
-    Test 6: With caching
-    Time taken with caching (Test 6): 0.00ms
+    Test 3: With caching
+    Time taken with caching (Test 3): 0.00ms
     """
+
+    import time
+
+    LINE = "====================================="
+
+    # Check the running time for make_audio
+    print("\n")
+    print(LINE)
+    print("Running time for make_audio()")
+    print(LINE)
+    text = "Hello, how are you?" * 10
+    print("Text length:", len(text))
+
+    # Test 1: Without caching (same translation request)
+    print("\nTest 1: Without caching")
+    start = time.time()
+    audio_path_1 = make_audio(
+        text, "Hindi", audio_path="./static/audio/test_1.mp3")
+    end = time.time()
+    ms = (end - start) * 1000
+    print(f"Time taken without caching (Test 1): {ms:.2f}ms")
+
+    # Test 2: Without caching (different translation request)
+    print("\nTest 2: Without caching (different request)")
+    start = time.time()
+    audio_path_2 = make_audio(
+        text, "Marathi", audio_path="./static/audio/test_2.mp3")
+    end = time.time()
+    ms = (end - start) * 1000
+    print(f"Time taken without caching (Test 2): {ms:.2f}ms")
+
+    # Test 3: With caching (same translation request)
+    print("\nTest 3: With caching")
+    start = time.time()
+    audio_path_1 = make_audio(
+        text, "Hindi", audio_path=audio_path_1)
+    end = time.time()
+    ms = (end - start) * 1000
+    print(f"Time taken with caching (Test 3): {ms:.2f}ms")
+
+    # Delete the audio files
+    os.remove(audio_path_1)
+    os.remove(audio_path_2)
+
+
+def display_cache():
+
+    LINE = "====================================="
+
+    print("\n")
+    print(LINE)
+    print("Cache contents")
+    print(LINE)
+    print("Translation cache:", translation_cache)
+    print("Audio cache:", audio_cache)
+
+
+if __name__ == "__main__":
+
+    test_translate_message()
+    test_make_audio()
+    # display_cache()
